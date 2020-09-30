@@ -63,6 +63,16 @@ def notas():
         return jsonify({'response': dumps(data)}), 201
     except Exception as err:
         return jsonify({'response': "Error al obtener las notas"}), 500
-      
+    
+# Agragar datos a la base de datos
+@app.route('/cantidadNotas', methods=['GET'])
+def cantidadNotas():
+    try:
+        data = []
+        data = collection.find()
+        return jsonify({'response': data.count()}), 201
+    except:
+        return jsonify({'response': 'Error al intentar insertar datos en el server'}), 500
+     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8080)

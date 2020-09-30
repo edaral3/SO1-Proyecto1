@@ -1,20 +1,27 @@
-# Use root/example as user/password credentials
-version: '3.1'
+version: "3"
 
-services:
+services: 
+    web:
+        container_name: api-database
+        restart: always
+        build: .
+        ports:
+            - "80:8080"
+        links:
+            - mongo
+        volumes: 
+            - api.py:/usr/src/app    
+        volumes: 
+            - /proc/:/elements/procs/        
+    mongo:
+        container_name: mongo-database
+        restart: always
+        image: mongo
+        ports: 
+            - "90:27017"
+        volumes: 
+            - /mongodb:/data/db    
 
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
 
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+
+

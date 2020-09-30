@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request, abort
 from pymongo import MongoClient
+from bson.json_util import dumps
 
 client = MongoClient()
-client = MongoClient('localhost', 80)
-db = client.texto 
-collection = db.texto
+client = MongoClient('mongodb://mongo:27017/')
+db = client.notas 
+collection = db.notas
 
 app = Flask(__name__)
 
@@ -28,7 +29,6 @@ def ram():
 def cpu():
     f = open("/elements/procs/cpu-module", "r")
     data = f.read()
-    print(data)
     return jsonify({'response': data})
 
 # obtener CPU2
@@ -36,9 +36,7 @@ def cpu():
 def cpu2():
     f = open("/elements/procs/loadavg", "r")
     data = f.read()
-    print(data)
     cpu = data.split(" ")
-    print(cpu[0])
     porcentajeCPU = float(cpu[0])*100
 
     return jsonify({'response': porcentajeCPU})
@@ -49,12 +47,22 @@ def insert():
     if not request.json or not 'autor' in request.json or not 'nota' in request.json:
         abort(400)
     try:
+        collection.insert(request.json)
         data = []
-        collection.insert_one(request.json).inserted_id
         data = collection.find()
         return jsonify({'response': data.count()}), 201
     except:
         return jsonify({'response': 'Error al intentar insertar datos en el server'}), 500
    
+# Obtener notas a la base de datos
+@app.route('/notas', methods=['GET'])
+def notas():
+    try:
+        data = []
+        data = collection.find()
+        return jsonify({'response': dumps(data)}), 201
+    except Exception as err:
+        return jsonify({'response': "Error al obtener las notas"}), 500
+      
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8080)

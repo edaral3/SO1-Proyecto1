@@ -12,9 +12,10 @@ class Item extends React.Component{
 
     render(){
         return(
-            <div className="item">
-                <div className="title">{this.props.autor}</div>
-                <div>{this.props.nota}</div>
+            <div className="div1">
+                {this.props.autor}
+                <br></br>
+                {this.props.nota}
             </div>
         );
     }

@@ -1,51 +1,54 @@
 import React from 'react';
 import List from './List';
+import Graph from './graph';
 import axios from 'axios';
 import './App.css';
 
-
 class App extends React.Component {
-
+  
   constructor(props){
     super(props);
-
     this.state = {
-      lista:[
-        {
-          autor:"Edgar Aldana",
-          nota:"asdfghj"
-        },
-        {
-          autor:"Edgar Aldana",
-          nota:"aaaaaaaaa"
-        },
-        {
-          autor:"Edgar Aldana",
-          nota:"ggggggggg"
-        }
-      ]
+      titulo: "Publicaciones",
+      lista: []
     };
   }
 
-  getDataServerA = () =>{
-    axios.get('http://127.0.0.1:4000/lista')
-    .then(result => {
-      this.setState({lista:result.data.lista})
-    })
-    .catch()
+  servidor = true
+
+  getDataServerA = () => {
+    this.servidor = true
+    setInterval(() => {
+      if(this.servidor){
+        axios.get('http://13.58.195.101/notas')
+        .then(result => {
+          var obj = JSON.parse(result.data.response)
+          this.setState({titulo:"Publicaciones A", lista:obj})
+        })
+        .catch()
+      }            
+      }, 1000)
   }
 
-  getDataServerB = () =>{
-    axios.get('http://127.0.0.1:4000/lista')
-    .then(result => {
-      this.setState({lista:[]})
-    })
-    .catch()
+  getDataServerB = () => {
+    this.servidor = false
+    setInterval(() => {
+      if(!this.servidor){
+        axios.get('http://13.58.15.216/notas')
+        .then(result => {
+          var obj = JSON.parse(result.data.response)
+          this.setState({titulo:"Publicaciones B", lista:obj})
+        })
+        .catch()   
+      }         
+      }, 1000)
   }
 
   render() {
     return (
+      
       <div className="App"> 
+      <Graph/>
       <br></br>
       <button
       type="button" 
@@ -61,7 +64,7 @@ class App extends React.Component {
         >
           Servidor B
         </button>
-        <h1>Publicaciones</h1>
+    <h1>{this.state.titulo}</h1>
         <List items={this.state.lista} />
       </div>
     );
